@@ -1,37 +1,64 @@
+# gui.py
+
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QMessageBox, QLineEdit, QVBoxLayout
-from backend.backend import fetch_repositories
+from PyQt5.QtWidgets import QWidget, QPushButton, QMessageBox, QLineEdit, QVBoxLayout, QLabel
+from backend.backend import fetch_repositories, create_repository, delete_repository
 
 
 class AppWindow(QWidget):
-    def __init__(self):
+    def __init__(self, username, token):
         super().__init__()
-        self.setWindowTitle('Simple PyQt App')
-        self.setGeometry(100, 100, 360, 180)  # x, y, width, height
+        self.username = username
+        self.token = token
+        self.setup_ui()
 
-        layout = QVBoxLayout(self)
+    def setup_ui(self):
+        self.setWindowTitle('GitHub Repository Manager')
+        self.setGeometry(100, 100, 480, 320)
+        layout = QVBoxLayout()
 
-        self.username_input = QLineEdit(self)
-        self.username_input.setPlaceholderText("Enter your username")
-        layout.addWidget(self.username_input)
+        # Add widgets for repository management
+        self.repo_name_input = QLineEdit(self)
+        self.repo_name_input.setPlaceholderText("Enter repository name")
+        layout.addWidget(self.repo_name_input)
 
-        self.token_input = QLineEdit(self)
-        self.token_input.setPlaceholderText("Enter your token")
-        self.token_input.setEchoMode(QLineEdit.Password)  # ascunde tokenul
-        layout.addWidget(self.token_input)
+        add_button = QPushButton('Add Repository', self)
+        add_button.clicked.connect(self.on_add_button_clicked)
+        layout.addWidget(add_button)
 
-        button = QPushButton('Fetch Repositories', self)
-        button.clicked.connect(self.on_button_clicked)
-        layout.addWidget(button)
+        delete_button = QPushButton('Delete Repository', self)
+        delete_button.clicked.connect(self.on_delete_button_clicked)
+        layout.addWidget(delete_button)
 
-    def on_button_clicked(self):
-        username = self.username_input.text()
-        token = self.token_input.text()
-        repos = fetch_repositories(username, token)
-        if repos is not None:
-            message = ""
-            for repo in repos:
-                message += f"Project Name: {repo['name']}\nProject URL: {repo['html_url']}\n"
-            QMessageBox.about(self, "Your Projects", message)
+        fetch_button = QPushButton('Fetch Repositories', self)
+        fetch_button.clicked.connect(self.on_fetch_button_clicked)
+        layout.addWidget(fetch_button)
+
+        self.repos_label = QLabel(self)
+        layout.addWidget(self.repos_label)
+
+        self.setLayout(layout)
+
+    def on_add_button_clicked(self):
+        repo_name = self.repo_name_input.text()
+        result = create_repository(self.username, self.token, repo_name)
+        if result:
+            QMessageBox.information(self, "Success", f"Repository '{repo_name}' created successfully.")
         else:
-            QMessageBox.warning(self, "Error", "Could not fetch repositories")
+            QMessageBox.critical(self, "Failure", "Failed to create repository.")
+
+    def on_delete_button_clicked(self):
+        repo_name = self.repo_name_input.text()
+        if delete_repository(self.username, self.token, repo_name):
+            QMessageBox.information(self, "Success", f"Repository '{repo_name}' deleted successfully.")
+        else:
+            QMessageBox.critical(self, "Failure", "Failed to delete repository.")
+
+    def on_fetch_button_clicked(self):
+        repos = fetch_repositories(self.username, self.token)
+        if repos is not None:
+            message = "Your Repositories:\n"
+            message += '\n'.join([f"{repo['name']}" for repo in repos])
+            self.repos_label.setText(message)
+        else:
+            QMessageBox.critical(self, "Failure", "Failed to fetch repositories.")
