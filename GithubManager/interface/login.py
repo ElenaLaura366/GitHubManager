@@ -13,7 +13,7 @@ class LoginWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Login to GitHub')
-        self.setGeometry(100, 100, 1000, 500)
+        self.setGeometry(100, 100, 1000, 600)
 
         # Main layout that centers everything
         center_layout = QVBoxLayout()

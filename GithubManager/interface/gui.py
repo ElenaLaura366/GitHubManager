@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QDesktopWidget
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QLineEdit
@@ -12,36 +12,50 @@ from backend.backend import delete_repository
 class AppWindow(QWidget):
     def __init__(self, username, token):
         super().__init__()
+        self.repos_label = None
+        self.repo_name_input = None
         self.username = username
         self.token = token
         self.setup_ui()
 
     def setup_ui(self):
         self.setWindowTitle('GitHub Repository Manager')
-        self.setGeometry(100, 100, 480, 320)
+        self.resize(1000, 600)  # Set the initial size of the window
+        self.center_window()   # Center the window on the screen
         layout = QVBoxLayout()
 
         # Add widgets for repository management
         self.repo_name_input = QLineEdit(self)
+        self.repo_name_input.setFixedSize(400, 40)
         self.repo_name_input.setPlaceholderText("Enter repository name")
         layout.addWidget(self.repo_name_input)
 
         add_button = QPushButton('Add Repository', self)
         add_button.clicked.connect(self.on_add_button_clicked)
+        add_button.setFixedSize(200, 40)  # Set the size of the button
         layout.addWidget(add_button)
 
         delete_button = QPushButton('Delete Repository', self)
         delete_button.clicked.connect(self.on_delete_button_clicked)
+        delete_button.setFixedSize(200, 40)  # Set the size of the button
         layout.addWidget(delete_button)
 
         fetch_button = QPushButton('Fetch Repositories', self)
         fetch_button.clicked.connect(self.on_fetch_button_clicked)
+        fetch_button.setFixedSize(200, 40)  # Set the size of the button
         layout.addWidget(fetch_button)
 
         self.repos_label = QLabel(self)
         layout.addWidget(self.repos_label)
 
         self.setLayout(layout)
+
+    def center_window(self):
+        # Function to center the window on the screen
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def on_add_button_clicked(self):
         repo_name = self.repo_name_input.text()
