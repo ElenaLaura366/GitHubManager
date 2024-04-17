@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QDesktopWidget
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QDesktopWidget
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QLineEdit
@@ -24,9 +25,12 @@ class AppWindow(QWidget):
         self.center_window()   # Center the window on the screen
         layout = QVBoxLayout()
 
+        center_widget = QWidget()
+        center_widget.setLayout(layout)
+
         # Add widgets for repository management
         self.repo_name_input = QLineEdit(self)
-        self.repo_name_input.setFixedSize(400, 40)
+        self.repo_name_input.setFixedSize(200, 40)
         self.repo_name_input.setPlaceholderText("Enter repository name")
         layout.addWidget(self.repo_name_input)
 
@@ -48,7 +52,13 @@ class AppWindow(QWidget):
         self.repos_label = QLabel(self)
         layout.addWidget(self.repos_label)
 
-        self.setLayout(layout)
+        # self.setLayout(layout)
+
+        main_layout = QVBoxLayout()
+        self.setLayout(main_layout)
+
+        # Add the center widget to the main layout to ensure everything is centered
+        main_layout.addWidget(center_widget, 0, Qt.AlignCenter)
 
     def center_window(self):
         # Function to center the window on the screen

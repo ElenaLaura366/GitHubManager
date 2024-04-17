@@ -9,7 +9,7 @@ def fetch_repositories(username, token):
         return None
 
 
-def create_repository(username, token, repo_name):
+def create_repository(token, repo_name):
     url = 'https://api.github.com/user/repos'
     headers = {'Authorization': f'token {token}'}
     data = {'name': repo_name}

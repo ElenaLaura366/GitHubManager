@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QDesktopWidget, QSpacerItem, QSizePolicy, QLabel
+from PyQt5.QtWidgets import QWidget, QDesktopWidget, QLabel
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QLineEdit
@@ -12,6 +12,7 @@ from backend.backend import check_github_token_validity
 class LoginWindow(QWidget):
     def __init__(self):
         super().__init__()
+        self.main_window = None
         self.setWindowTitle('Login to GitHub')
         self.setGeometry(100, 100, 1000, 600)
 
@@ -22,7 +23,7 @@ class LoginWindow(QWidget):
         center_widget = QWidget()
         center_widget.setLayout(center_layout)
 
-        # "Please Login" label with larger font
+        # "Please Log in" label with larger font
         login_label = QLabel("Please Login")
         login_label.setAlignment(Qt.AlignCenter)  # Ensure the label is centered
         # Customize the label's appearance with a larger font size
@@ -65,15 +66,9 @@ class LoginWindow(QWidget):
         # Add the center widget to the main layout to ensure everything is centered
         main_layout.addWidget(center_widget, 0, Qt.AlignCenter)
 
-        self.centerWindow()
+        self.center_window()
 
-    def centerWindow(self):
-        qr = self.frameGeometry()
-        cp = QDesktopWidget().availableGeometry().center()
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
-
-    def centerWindow(self):
+    def center_window(self):
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
@@ -91,4 +86,3 @@ class LoginWindow(QWidget):
             self.close()
         else:
             QMessageBox.warning(self, "Login Failed", "Invalid username or token. Please try again.")
-
