@@ -31,4 +31,4 @@ Before running this application, you need to have Python and PyQt5 installed on 
 
 Contributions to this project are welcome. Please fork the repository and submit a pull request with your enhancements.
 
-![aplication](/assets/Screenshot 2024-04-17 092542.png)
+![aplication](/assets/Application.png)
